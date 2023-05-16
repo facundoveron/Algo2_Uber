@@ -1,3 +1,5 @@
+import utils
+import repository
 
 def createMap(route):
     try:
@@ -6,10 +8,13 @@ def createMap(route):
             vertices = coordinates.readline()
             edges = coordinates.readline()
             coordinates.close()
+            graph = utils.createGraph(vertices, edges)
+            repository.saveMaps(graph)
+            repository.openGraph()
         else:
             print("El archivo se encuentra el Null")
     except:
-        print("error")
+        print("Error al crear el mapa")
 
 
 def loadFixElement(route):

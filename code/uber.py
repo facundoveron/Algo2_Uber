@@ -5,6 +5,7 @@ def main(command):
     try:
         if "-create_map" == command[0]:
             serviceUber.createMap(command[1])
+            print("map created successfully")
         elif "-load_fix_element" == command[0]:
             serviceUber.loadFixElement(command[1])
         elif "-load_movil_element" == command[0]:
