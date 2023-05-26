@@ -1,5 +1,5 @@
-import utils
-import repository
+from ownLibraries import graphUtils
+import fileUtils
 
 def createMap(route):
     try:
@@ -8,19 +8,18 @@ def createMap(route):
             vertices = coordinates.readline()
             edges = coordinates.readline()
             coordinates.close()
-            graph = utils.createGraph(vertices, edges)
-            repository.saveMaps(graph)
-            repository.openGraph()
+            graph = graphUtils.createGraph(vertices, edges)
+            fileUtils.saveMap(graph)
+            fileUtils.openMap()
         else:
-            print("El archivo se encuentra el Null")
+            print("El archivo está vacío")
     except:
         print("Error al crear el mapa")
-
 
 def loadFixElement(route):
     print("God")
 
-def loadMovilElement(route):
+def loadMobileElement(route):
     print("God")
 
 def createTrip(route):

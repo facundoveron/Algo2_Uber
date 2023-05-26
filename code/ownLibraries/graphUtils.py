@@ -19,15 +19,12 @@ def createGraph(vertices, edges):
         graph[index] = LinkedList()
         graph[index].head = nodo
         node = node.nextNode
-
     node = edges.head
     while node != None:
         addV(node.value[0], node.value[1], n, graph)
         addV(node.value[1], node.value[0], n, graph)
         node = node.nextNode
-
     return graph
-
 def addV(v1, v2, n, graph):
     node = Node()
     node.value = v2
@@ -41,16 +38,12 @@ def addV(v1, v2, n, graph):
                 edges.nextNode = node
                 break
             edges = edges.nextNode
-
-
 def hash(key, n):
     return (ord(key) - ord("a") + 1) % n
-
 
 '''
     Ejercicio 2
 '''
-
 def existPath(graph, v1, v2):
     bfs(graph, v1)
     n = len(graph)
@@ -61,9 +54,6 @@ def existPath(graph, v1, v2):
         else:
             vertex = graph[hash(vertex.value[2], n)].head
     return False
-
-
-
 def bfs(graph, s):
     for i in graph:
         value = i.head.value
@@ -95,7 +85,6 @@ def bfs(graph, s):
 '''
     Ejercicio 3
 '''
-
 def isConnected(graph):
     a = graph[0].head.value
     bfs(graph, a)
@@ -109,8 +98,6 @@ def isConnected(graph):
 '''
 def isTree(graph):
     return isConnected(graph) and cycleVerify(graph)
-        
-
 def cycleVerify(graph):
     s = graph[0].head.value
     for i in graph:
@@ -143,7 +130,6 @@ def cycleVerify(graph):
                 colour = graph[hash(u.value, n)].head.value[1]
         graph[hash(letter, n)].head.value[1] = "black"
     return True    
-
 
 '''
     Ejercicio 5
@@ -208,8 +194,6 @@ def convertTree(graph):
 '''
     Parte 2
 '''
-
-
 def dfs(graph):
     for i in graph:
         value = i.head.value
@@ -220,7 +204,6 @@ def dfs(graph):
     for i in graph:
         if i.head.value[1] == "white":
             dfsR(graph, i.head, n, time)
-
 def dfsR(graph,u,n, time):
     time += 1
     u.value[3] = time
@@ -256,7 +239,6 @@ def countConnections(graph):
             dfsR(graph, i.head, n, time)
 
     return conexNumber
-    
 
 '''
     Ejercicio 8
@@ -330,7 +312,6 @@ def convertToDFSTree(graph, v):
         graphR[position].head = nodo
 
     return graphR
-
 def convertToDFSTreeR(graph,u,n,j):
     u.value[1] = "gray"
     u.value[2] = j
@@ -347,7 +328,6 @@ def convertToDFSTreeR(graph,u,n,j):
 '''
     Ejercicio 10
 '''
-
 def bestRoad(graph, v1, v2):
     bfs(graph,v1)
     n = len(graph)
@@ -360,7 +340,6 @@ def bestRoad(graph, v1, v2):
         if letter == v1:
             return edges
         letter = vertex.value[2]
-
 def prim(graph):
     n = len(graph)
     v = graph[0].head
@@ -442,8 +421,6 @@ def prim(graph):
 
         u = dequeue(Q)
     ''' 
-        
-
 graph = {
     'A': [('B', 2), ('D', 6)],
     'B': [('A', 2), ('C', 3), ('D', 8), ('E', 5)],
@@ -451,8 +428,6 @@ graph = {
     'D': [('A', 6), ('B', 8), ('E', 9)],
     'E': [('B', 5), ('C', 7), ('D', 9)]
 }
-
-
 def create():
     vertices = LinkedList()
     letters = ["a", "b", "c", "d", "e"]
