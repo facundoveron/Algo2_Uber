@@ -660,7 +660,7 @@ def deleteBidirecction(graph):
 '''
 
 
-def dijkstra(graph,s,v):
+def dijkstra(graph,s,r):
     n = len(graph)
     initRelax(graph, s)
     S = LinkedList()
@@ -677,7 +677,7 @@ def dijkstra(graph,s,v):
                 w = nodo.value[1]
                 relax(u.value, v.head.value, w, Q, graph)
             nodo = nodo.nextNode
-    return shortestPath(graph, s, "e", n)
+    return shortestPath(graph, s, r, n)
 
 
 def shortestPath(graph, s, v, n):
