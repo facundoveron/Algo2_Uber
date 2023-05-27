@@ -4,7 +4,6 @@
 from algo1 import Array
 from linkedList import LinkedList, length, add, Node, search, delete
 from myqueue import enqueue, dequeue
-import mypriorityqueue
 import random
 
 def createGraph(vertices, edges):
@@ -667,7 +666,7 @@ def dijkstra(graph,s,v):
     S = LinkedList()
     Q = LinkedList()
     enqueue(Q, graph[hash(s, n)].head)
-    while Q != None:
+    while Q.head != None:
         nodo = dequeue(Q)
         u = nodo
         add(S, u.value[0])
@@ -678,6 +677,20 @@ def dijkstra(graph,s,v):
                 w = nodo.value[1]
                 relax(u.value, v.head.value, w, Q, graph)
             nodo = nodo.nextNode
+    return shortestPath(graph, s, "e", n)
+
+
+def shortestPath(graph, s, v, n):
+    path = LinkedList()
+    add(path,v)
+    while True:
+        father = graph[hash(v,n)].head.value[2]
+        add(path, father)
+        if father == s:
+            break
+        else:
+            v = father
+    return path
 
 def minQueue(graph, Q):
     for i in graph:
