@@ -1,4 +1,4 @@
-import linkedList
+import ownLibraries.linkedList as linkedList
 
 def enqueue(Q,element):
     linkedList.add(Q,element)

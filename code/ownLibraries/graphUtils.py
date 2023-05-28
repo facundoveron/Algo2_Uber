@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from algo1 import Array
-from linkedList import LinkedList, length, add, Node, search, delete
-from myqueue import enqueue, dequeue
+from ownLibraries.algo1 import Array
+from ownLibraries.linkedList import LinkedList, length, add, Node, search, delete
+from ownLibraries.myqueue import enqueue, dequeue
 import random
 
 def createGraph(vertices, edges):
@@ -27,7 +27,6 @@ def createGraph(vertices, edges):
         node = node.nextNode
 
     return graph
-
 def addV(v1, v2, n, graph):
     node = Node()
     node.value = v2
@@ -41,15 +40,12 @@ def addV(v1, v2, n, graph):
                 edges.nextNode = node
                 break
             edges = edges.nextNode
-
-
 def hash(key, n):
     return (ord(key) - ord("a") + 1) % n
 
 '''
     Ejercicio 2
 '''
-
 def existPath(graph, v1, v2):
     bfs(graph, v1)
     n = len(graph)
@@ -60,9 +56,6 @@ def existPath(graph, v1, v2):
         else:
             vertex = graph[hash(vertex.value[2], n)].head
     return False
-
-
-
 def bfs(graph, s):
     for i in graph:
         value = i.head.value
@@ -94,7 +87,6 @@ def bfs(graph, s):
 '''
     Ejercicio 3
 '''
-
 def isConnected(graph):
     a = graph[0].head.value
     bfs(graph, a)
@@ -108,8 +100,6 @@ def isConnected(graph):
 '''
 def isTree(graph):
     return isConnected(graph) and cycleVerify(graph)
-        
-
 def cycleVerify(graph):
     s = graph[0].head.value
     for i in graph:
@@ -142,7 +132,6 @@ def cycleVerify(graph):
                 colour = graph[hash(u.value, n)].head.value[1]
         graph[hash(letter, n)].head.value[1] = "black"
     return True    
-
 
 '''
     Ejercicio 5
@@ -207,8 +196,6 @@ def convertTree(graph):
 '''
     Parte 2
 '''
-
-
 def dfs(graph):
     for i in graph:
         value = i.head.value
@@ -219,7 +206,6 @@ def dfs(graph):
     for i in graph:
         if i.head.value[1] == "white":
             dfsR(graph, i.head, n, time)
-
 def dfsR(graph,u,n, time):
     time += 1
     u.value[3] = time
@@ -255,7 +241,6 @@ def countConnections(graph):
             dfsR(graph, i.head, n, time)
 
     return conexNumber
-    
 
 '''
     Ejercicio 8
@@ -329,7 +314,6 @@ def convertToDFSTree(graph, v):
         graphR[position].head = nodo
 
     return graphR
-
 def convertToDFSTreeR(graph,u,n,j):
     u.value[1] = "gray"
     u.value[2] = j
@@ -346,7 +330,6 @@ def convertToDFSTreeR(graph,u,n,j):
 '''
     Ejercicio 10
 '''
-
 def bestRoad(graph, v1, v2):
     bfs(graph,v1)
     n = len(graph)
@@ -363,7 +346,6 @@ def bestRoad(graph, v1, v2):
 '''
     Ejercicio 11
 '''
-
 '''
     Ejercicio 12
 
@@ -386,7 +368,6 @@ Supongamos que tenemos un grafo G que es un árbol y se le agrega una arista nue
 La demostración muestra que agregar una arista nueva entre cualquier par de vértices en un grafo árbol siempre resultará en la formación de un ciclo y la pérdida de la propiedad de ser un árbol.
 
 '''
-
 '''
     Ejercicio 13
 
@@ -409,17 +390,13 @@ Supongamos que tenemos un árbol BFS y una arista (u, v) que no pertenece a este
 La demostración muestra que si una arista no está presente en el árbol BFS, los niveles de los vértices que conecta difieren a lo sumo en 1. Esto se debe a que el árbol BFS representa la distancia más corta desde el vértice raíz, y cualquier arista que tenga una longitud menor que la distancia entre los vértices en términos de niveles debería haber sido incluida en el árbol BFS.
 
 '''
-
-
 '''
     Parte 3
 '''
 
-
 '''
     Ejercicio 14
 '''
-
 def prim(graph):
     n = len(graph)
     v = graph[0].head
@@ -472,11 +449,9 @@ def prim(graph):
 
     return graphR 
 
-
 '''
     Ejercicio 15
 '''
-
 def kruskal(graph):
     n = len(graph)
     sets = Array(n,("",""))
@@ -498,8 +473,6 @@ def kruskal(graph):
         nodo = nodo.nextNode
 
     return createGraph(A,B)
-
-
 def sortEdges(graph, edges):
     visited = LinkedList()
     for i in graph:
@@ -511,12 +484,10 @@ def sortEdges(graph, edges):
                 enqueuePriority(edges, (vertex, nodo.value[0], nodo.value[1]))
             nodo = nodo.nextNode
         add(visited, vertex)
-
 def union(sets, u, v, n):
     newGroup = find(sets, u, n)
     otherGroup = find(sets, v, n)
     sets[hash(otherGroup,n)] = (otherGroup,newGroup)
-
 def find(sets,vertex,n):
     if sets[hash(vertex, n)][1] == vertex:
         return vertex
@@ -524,8 +495,6 @@ def find(sets,vertex,n):
     group = find(sets, sets[hash(vertex,n)][1], n)
     sets[hash(vertex,n)] = (vertex,group)
     return group
-
-
 def enqueuePriority(Q, value):
     node = Node() 
     node.value = value
@@ -550,6 +519,7 @@ def enqueuePriority(Q, value):
             head = head.nextNode
         if flag:
             pre.nextNode = node
+
 '''
 def ponderar(graph):
     visited = LinkedList()
@@ -563,7 +533,6 @@ def ponderar(graph):
         add(visited, i.head.value)
 '''
 
-
 '''
     Ejercicio 16
 
@@ -576,12 +545,9 @@ Si eliminamos la arista (w, v) de T y agregamos la arista (u, v) en su lugar, ob
 Por lo tanto, nuestra suposición de que la arista (u, v) de costo mínimo no pertenece a un árbol abarcador de costo mínimo es incorrecta. Concluimos que si la arista (u, v) de costo mínimo tiene un nodo en U y otro en V - U, entonces la arista (u, v) pertenece a un árbol abarcador de costo mínimo.
 
 '''
-
-
 '''
     Parte 4
 '''
-
 '''
     Ejercicio 17
     Supongamos que tenemos un grafo G(V, A) y una arista e que pertenece a algún ciclo de G y tiene el mayor costo entre todas las aristas del ciclo. Queremos demostrar que existe un árbol abarcador de costo mínimo de G, denotado como AACM(V, A-e), que también es un árbol abarcador de costo mínimo de G.
@@ -594,7 +560,6 @@ El costo total de T' será menor que el costo total de T, ya que eliminamos la a
 
 Por lo tanto, nuestra suposición de que no existe un árbol abarcador de costo mínimo AACM(V, A-e) que también sea un árbol abarcador de costo mínimo de G es incorrecta. Concluimos que existe un árbol abarcador de costo mínimo AACM(V, A-e) que también es un árbol abarcador de costo mínimo de G.
 '''
-
 '''
     Ejercicio 18
     Para demostrar que unir dos Árboles Abarcadores de Costo Mínimo (AACM) mediante una arista de costo mínimo resulta en un nuevo AACM, podemos utilizar el método de contradicción.
@@ -613,7 +578,6 @@ Esto contradice la suposición inicial de que se formaba un ciclo al unir T1 y T
 
 Esta propiedad es la base del funcionamiento del algoritmo de Kruskal, que busca unir los AACM de manera incremental, comenzando por las aristas de costo mínimo, para construir el AACM global de costo mínimo.
 '''
-
 '''
     Ejercicio 19
 
@@ -628,7 +592,6 @@ Esta propiedad es la base del funcionamiento del algoritmo de Kruskal, que busca
         Considerar las aristas de E primero
         Actualizar las distancias solo si el peso de la arista candidata es menor
 '''
-
 '''
     Ejercicio 20
 
@@ -642,7 +605,6 @@ Esta propiedad es la base del funcionamiento del algoritmo de Kruskal, que busca
     
     Devolver M
 '''
-
 '''
     Ejercicio 21
 '''
@@ -658,7 +620,6 @@ def deleteBidirecction(graph):
             if nodo != None:
                 letter = nodo.value
 '''
-
 
 def dijkstra(graph,s,r):
     n = len(graph)
@@ -678,8 +639,6 @@ def dijkstra(graph,s,r):
                 relax(u.value, v.head.value, w, Q, graph)
             nodo = nodo.nextNode
     return shortestPath(graph, s, r, n)
-
-
 def shortestPath(graph, s, v, n):
     path = LinkedList()
     add(path,v)
@@ -691,7 +650,6 @@ def shortestPath(graph, s, v, n):
         else:
             v = father
     return path
-
 def minQueue(graph, Q):
     for i in graph:
         if i.head.value[1] != None:
@@ -700,14 +658,12 @@ def minQueue(graph, Q):
             if Q.head == None:
                 Q.head = nodo
                 break
-
 def initRelax(graph,s):
     n = len(graph)
     for i in graph:
         letter = i.head.value
         i.head.value = [letter, None, None]
     graph[hash(s,n)].head.value[1] = 0
-
 def relax(u,v, w, Q, graph):
     if v[1] == None or v[1] > (u[1] + w):
         v[1] = u[1] + w
@@ -722,7 +678,6 @@ for i in letters:
     index = hash(i,5)
     graph[index] = LinkedList()
     graph[index].head = nodo
-
 
 tupple = [("a","b", 5),("a","c", 10),("b","c", 3),("b","d", 2),("b","e", 9),("c","b", 2),("c","e", 1),("d","a", 7),("d","e", 6),("e","d", 4)]
 for i in tupple:
