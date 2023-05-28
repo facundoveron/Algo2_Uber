@@ -7,39 +7,30 @@ from ownLibraries.myqueue import enqueue, dequeue
 import random
 
 def createGraph(vertices, edges):
-    n = length(vertices)
-    if n <= 0:
-        return
-    graph = Array(n,LinkedList())
-    node = vertices.head
-    while node != None:
+    n = len(vertices)
+    graph = Array(n, LinkedList())
+    for i in letters:
         nodo = Node()
-        nodo.value = node.value
-        index = hash(node.value, n)
+        nodo.value = i
+        index = hash(i,n)
         graph[index] = LinkedList()
         graph[index].head = nodo
-        node = node.nextNode
 
-    node = edges.head
-    while node != None:
-        addV(node.value[0], node.value[1], n, graph)
-        addV(node.value[1], node.value[0], n, graph)
-        node = node.nextNode
-
+    for i in edges:
+        index = hash(i[0], n)
+        tupla = [i[1], i[2]]
+        nodo = Node()
+        nodo.value = tupla
+        node = graph[index]
+        if node.head.nextNode == None:
+            node.head.nextNode = nodo
+        else:
+            node = node.head.nextNode
+            while node.nextNode != None:
+                node = node.nextNode
+            node.nextNode = nodo
     return graph
-def addV(v1, v2, n, graph):
-    node = Node()
-    node.value = v2
-    index = hash(v1, n)
-    edges = graph[index].head
-    if edges.nextNode == None:
-        edges.nextNode = node
-    else:
-        while edges != None:
-            if edges.nextNode == None:
-                edges.nextNode = node
-                break
-            edges = edges.nextNode
+
 def hash(key, n):
     return (ord(key) - ord("a") + 1) % n
 
@@ -670,28 +661,10 @@ def relax(u,v, w, Q, graph):
         v[2] = u[0]
         enqueue(Q, graph[hash(v[0],5)].head)
         
-graph = Array(5, LinkedList())
+
 letters = ["a", "b", "c", "d", "e"]
-for i in letters:
-    nodo = Node()
-    nodo.value = i
-    index = hash(i,5)
-    graph[index] = LinkedList()
-    graph[index].head = nodo
-
 tupple = [("a","b", 5),("a","c", 10),("b","c", 3),("b","d", 2),("b","e", 9),("c","b", 2),("c","e", 1),("d","a", 7),("d","e", 6),("e","d", 4)]
-for i in tupple:
-    index = hash(i[0], 5)
-    tupla = [i[1], i[2]]
-    nodo = Node()
-    nodo.value = tupla
-    node = graph[index]
-    if node.head.nextNode == None:
-        node.head.nextNode = nodo
-    else:
-        node = node.head.nextNode
-        while node.nextNode != None:
-            node = node.nextNode
-        node.nextNode = nodo
 
+graph = createGraph(letters, tupple)
+print(graph)
 dijkstra(graph, "a", "e")
