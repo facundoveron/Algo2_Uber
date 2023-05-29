@@ -7,18 +7,22 @@ from ownLibraries.myqueue import enqueue, dequeue
 import random
 
 def createGraph(vertices, edges):
+    vertices = vertices.strip("{}\n")
+    vertices = vertices.split(",")
     n = len(vertices)
     graph = Array(n, LinkedList())
-    for i in letters:
+    for i in vertices:
         nodo = Node()
         nodo.value = i
-        index = hash(i,n)
+        index = hash(i[1],n)
         graph[index] = LinkedList()
         graph[index].head = nodo
 
+    edges = edges.strip("{}\n")
+    edges = edges.split(", ")
     for i in edges:
-        index = hash(i[0], n)
-        tupla = [i[1], i[2]]
+        index = hash(i[2], n)
+        tupla = [i[4:6], i[7]]
         nodo = Node()
         nodo.value = tupla
         node = graph[index]
@@ -662,9 +666,4 @@ def relax(u,v, w, Q, graph):
         enqueue(Q, graph[hash(v[0],5)].head)
         
 
-letters = ["a", "b", "c", "d", "e"]
-tupple = [("a","b", 5),("a","c", 10),("b","c", 3),("b","d", 2),("b","e", 9),("c","b", 2),("c","e", 1),("d","a", 7),("d","e", 6),("e","d", 4)]
 
-graph = createGraph(letters, tupple)
-print(graph)
-dijkstra(graph, "a", "e")

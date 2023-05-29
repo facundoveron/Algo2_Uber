@@ -5,13 +5,13 @@ import pickle
 
 def saveMap(graph):
     try:
-        with open("../resources/newMap", "bw") as file:
+        with open("resources/newMap", "bw") as file:
             pickle.dump(graph, file)
     except Exception as a:
         print("Error al guardar el mapa", a.args)
 def loadMap():
     try:
-        with open("../resources/newMap", "br") as file:
+        with open("resources/newMap", "br") as file:
             f = pickle.load(file)
             for i in f:
                 print(i.head.value)

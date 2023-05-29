@@ -24,4 +24,7 @@ def main(command):
         print("Error", a.args)
 
 command = sys.argv[1:]
-main(command)
+#main(command)
+
+print("hola")
+uberService.createMap("resources/map.txt")
