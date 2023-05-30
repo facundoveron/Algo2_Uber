@@ -24,6 +24,6 @@ def main(command):
         print("Error", a.args)
 
 command = sys.argv[1:]
-#main(command)
+main(command)
 #uberService.createMap("resources/map.txt")
 #uberService.loadFixedElement("<H0, {<e1, 100>, <e2, 1>}>")

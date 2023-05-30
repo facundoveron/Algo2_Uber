@@ -20,7 +20,6 @@ def createMap(route):
             coordinates.close()
             graph = graphUtils.createGraph(vertices, edges)
             fileUtils.saveMap(graph)
-            fileUtils.loadMap()
         else:
             print("El archivo está vacío")
     except Exception as a:
