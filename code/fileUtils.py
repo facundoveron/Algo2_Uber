@@ -15,6 +15,7 @@ def loadMap():
             f = pickle.load(file)
             for i in f:
                 print(i.head.value)
+        return f
     except Exception as a:
         print("Error al guardar el mapa", a.args)
 def saveFixedElem(elem):
@@ -25,7 +26,7 @@ def saveFixedElem(elem):
         print("Error al guardar elemento fijo")
 def loadFixedElems():
     try:
-        with open("../resources/fixedElems", "br") as file:
+        with open("resources/fixedElems", "br") as file:
             return pickle.load(file)
     except:
         print("Error al cargar elemento fijo")

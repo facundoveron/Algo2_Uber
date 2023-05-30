@@ -32,11 +32,17 @@ def loadFixedElement(route):
     route = <AX, {<e1, 10>, <e2, 5>}>
     '''
     name = re.search("\w{2}", route).group()
-    direction = re.search("(?<={).+(?=})", route).group() 
-    currentDict = fileUtils.loadFixedElems()
-    currentDict[name] = FixedElem(direction)
-    fileUtils.saveFixedElem(currentDict)
-    print("Done! FE")
+    direction = re.search("(?<={).+(?=})", route).group()
+    direction = re.findall(r'\w+', direction)
+    graph = fileUtils.loadMap()
+    error = graphUtils.validator(direction, graph)
+    if error == None:
+        currentDict = fileUtils.loadFixedElems()
+        currentDict[name] = FixedElem(direction)
+        fileUtils.saveFixedElem(currentDict)
+        print("Done! FE")
+    else:
+        print(error)
 
 def loadMobileElement(route):
     '''
@@ -47,10 +53,14 @@ def loadMobileElement(route):
     name = re.search("\w{2}", route).group()
     direction = re.search("(?<={).+(?=})", route).group()
     amount = re.search("\d{1,5}(?=>$)", route).group()
-    currentDict = fileUtils.loadMobileElems()
-    currentDict[name] = MobileElem(direction, amount)
-    fileUtils.saveMobileElem(currentDict)
-    print("Done! ME")
+    error = graphUtils.validator("","")
+    if error == None:
+        currentDict = fileUtils.loadMobileElems()
+        currentDict[name] = MobileElem(direction, amount)
+        fileUtils.saveMobileElem(currentDict)
+        print("Done! ME")
+    else:
+        print(error)
 
 def createTrip(route):
     '''

@@ -22,7 +22,7 @@ def createGraph(vertices, edges):
     edges = edges.split(", ")
     for i in edges:
         index = hash(i[2], n)
-        tupla = [i[4:6], i[7]]
+        tupla = [i[4:6], i[7:9]]
         nodo = Node()
         nodo.value = tupla
         node = graph[index]
@@ -37,6 +37,25 @@ def createGraph(vertices, edges):
 
 def hash(key, n):
     return (ord(key) - ord("a") + 1) % n
+
+def validator(direction, graph):
+    n = len(graph)
+    sum = 0
+    for i in direction:
+        if i[0] == "e":
+            addres = str(hash(i[1],n))
+            if i[1] != addres:
+                return "La esquina ingresada no es valida, no existe en el mapa."
+        else:
+            sum += int(i)
+    
+    node = graph[hash(direction[0][1], n)].head.nextNode
+    vertex = graph[hash(direction[2][1], n)].head
+    while node != None:
+        if node.value[0] == vertex.value and int(node.value[1]) < sum:
+            return "La distancia ingresada es mayor a la distancia total de la calle"
+        node = node.nextNode
+
 
 '''
     Ejercicio 2
