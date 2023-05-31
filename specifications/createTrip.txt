@@ -1,0 +1,11 @@
+def createTrip(route):
+	obtener origen: obtener dirección de PX
+	obtener destino: dirección u obtener a partir de elemento fijo
+	obtener distancia mínima a destino
+	obtener lista de autos
+	calcular distancia de cada auto a PX
+	ordenar lista en base a distancia a PX, de menor a mayor
+	calcular costo del viaje hacia cada auto
+	mostrar panel interactivo con los 3 autos más cercanos que puede pagar
+	mover auto y PX a destino y mostrar distancia mínima
+	

@@ -4,22 +4,12 @@ import fileUtils
 
 def main(command):
     try:
-        if "-create_map" == command[0]:
-            uberService.createMap(command[1])
-            print("map created successfully")
-        elif "-load_fix_element" == command[0]:
-            uberService.loadFixedElement(command[1])
-        elif "-load_movil_element" == command[0]:
-            uberService.loadMobileElement(command[1])
-        elif "-create_trip" == command[0]:
+        if command[0] is "-create_map":
+            uberService.setup(command[1])
+        elif command[0] in ("-load_fix_element", "-load_movil_element"):
+            uberService.saveElem(command[1])
+        elif command[0] is "-create_trip":
             uberService.createTrip(command[1])
-        # Sólo para testeo
-        elif "-setupFiles" == command[0]:
-            fileUtils.setupFiles()
-        elif "-printFixedElems" == command[0]:
-            print(fileUtils.loadFixedElems()["A1"].dir)
-        elif "-printMobileElems" == command[0]:
-            print(fileUtils.loadMobileElems()["P1"].amount)
     except Exception as a:
         print("Error", a.args)
 

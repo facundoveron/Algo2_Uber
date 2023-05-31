@@ -1,17 +1,21 @@
 from ownLibraries import graphUtils
 import fileUtils
-import re
 
-class FixedElem:
+class Elem:
     def __init__(self, dir):
         self.dir = dir
 
-class MobileElem:
+class User(Elem):
     def __init__(self, dir, amount):
-        self.dir = dir
-        self.amount = amount
+        super().__init__(dir)
+        self.balance = amount
 
-def createMap(route):
+class Driver(Elem):
+    def __init__(self, dir, amount):
+        super().__init__(dir)
+        self.rate = amount
+
+def setup(route):
     try:
         coordinates = open(route)
         if coordinates != None:
@@ -19,50 +23,41 @@ def createMap(route):
             edges = coordinates.readline()
             coordinates.close()
             graph = graphUtils.createGraph(vertices, edges)
-            fileUtils.saveMap(graph)
+            fileUtils.save("map", graph)
+            fileUtils.setupDicts()
+            print("Map succesfully saved")
         else:
             print("El archivo está vacío")
     except Exception as a:
         print("Error al crear el mapa", a.args)
 
-def loadFixedElement(route):
-    '''
-    route = <nombre, dirección>
-    route = <AX, {<e1, 10>, <e2, 5>}>
-    '''
-    name = re.search("\w{2}", route).group()
-    direction = re.search("(?<={).+(?=})", route).group()
-    direction = re.findall(r'\w+', direction)
-    graph = fileUtils.loadMap()
-    error = graphUtils.validator(direction, graph)
-    if error == None:
-        currentDict = fileUtils.loadFixedElems()
-        currentDict[name] = FixedElem(direction)
-        fileUtils.saveFixedElem(currentDict)
-        print("Done! FE")
+def saveElem(params):
+    # params = <nombre, dirección, monto>
+    # params = <AX, {<e1, 10>, <e2, 5>}>
+    # params = <PX, {<e1, 10>, <e2, 5>}, saldo>
+    # params = <CX, {<e1, 10>, <e2, 5>}, tarifa>
+    parts = params.strip("<>\n").split(", ")
+    name = parts[0]
+    dir = parts[1].strip("{}").split(", ")
+    # todo: add dir validation
+    if name[0] == "P":
+        balance = parts[2]
+        dic = fileUtils.load("users")
+        dic[name] = User(dir, balance)
+        fileUtils.save("users", dic)
+        print("User succesfully saved")
+    elif name[0] == "C":
+        rate = parts[2]
+        dic = fileUtils.load("drivers")
+        dic[name] = Driver(dir, rate)
+        fileUtils.save("drivers", dic)
+        print("Driver succesfully saved")
     else:
-        print(error)
+        dic = fileUtils.load("fixed")
+        dic[name] = Elem(dir)
+        fileUtils.save("fixed", dic)
+        print("Fixed location succesfully saved")
 
-def loadMobileElement(route):
-    '''
-    route = <nombre, dirección, monto>
-    route = <PX, {<e1, 10>, <e2, 5>}, saldo>
-    route = <CX, {<e1, 10>, <e2, 5>}, tarifa>
-    '''
-    name = re.search("\w{2}", route).group()
-    direction = re.search("(?<={).+(?=})", route).group()
-    amount = re.search("\d{1,5}(?=>$)", route).group()
-    error = graphUtils.validator("","")
-    if error == None:
-        currentDict = fileUtils.loadMobileElems()
-        currentDict[name] = MobileElem(direction, amount)
-        fileUtils.saveMobileElem(currentDict)
-        print("Done! ME")
-    else:
-        print(error)
-
-def createTrip(route):
-    '''
-    route = PX/CX <dirección>/<elemento>
-    '''
-    print("CT")
+def createTrip(params):
+    # params = PX <dirección>/<elemento>
+    print("")

@@ -43,8 +43,8 @@ def validator(direction, graph):
     sum = 0
     for i in direction:
         if i[0] == "e":
-            addres = str(hash(i[1],n))
-            if i[1] != addres:
+            address = str(hash(i[1],n))
+            if i[1] != address:
                 return "La esquina ingresada no es valida, no existe en el mapa."
         else:
             sum += int(i)
