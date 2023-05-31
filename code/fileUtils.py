@@ -21,14 +21,4 @@ def save(type, obj):
         pickle.dump(obj, file)
 def load(type):
     with open(routes[type], "br") as file:
-        return pickle.load(file)
-
-'''
-for i in LinkedList:
-    node = i.head
-    print(i.head.value, end=" ")
-    while node.nextNode != None:
-        node = node.nextNode
-        print(node.value, end=" ")
-    print("")
-'''
+        return pickle.load(file)    

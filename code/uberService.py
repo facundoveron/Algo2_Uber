@@ -1,5 +1,6 @@
 from ownLibraries import graphUtils
 import fileUtils
+import re
 
 class Elem:
     def __init__(self, dir):
@@ -33,21 +34,27 @@ def setup(route):
 
 def saveElem(params):
     # params = <nombre, dirección, monto>
-    # params = <AX, {<e1, 10>, <e2, 5>}>
-    # params = <PX, {<e1, 10>, <e2, 5>}, saldo>
-    # params = <CX, {<e1, 10>, <e2, 5>}, tarifa>
-    parts = params.strip("<>\n").split(", ")
+    # params = AX, {<e1, 10>, <e2, 5>}
+    # params = PX, {<e1, 10>, <e2, 5>}, saldo
+    # params = CX, {<e1, 10>, <e2, 5>}, tarifa
+    parts = re.findall("\w+", params)
+    # name -> part 0
+    # dir -> parts 1-4
+    # amount -> part 5
+    if len(parts) <= 1 or (len(parts) > 1 and len(parts) < 5):
+        print("Missing required arguments")
+        return
     name = parts[0]
-    dir = parts[1].strip("{}").split(", ")
+    dir = parts[1:-1] if len(parts) == 6 else parts[1:]
     # todo: add dir validation
     if name[0] == "P":
-        balance = parts[2]
+        balance = parts[5]
         dic = fileUtils.load("users")
         dic[name] = User(dir, balance)
         fileUtils.save("users", dic)
         print("User succesfully saved")
     elif name[0] == "C":
-        rate = parts[2]
+        rate = parts[5]
         dic = fileUtils.load("drivers")
         dic[name] = Driver(dir, rate)
         fileUtils.save("drivers", dic)
@@ -58,6 +65,33 @@ def saveElem(params):
         fileUtils.save("fixed", dic)
         print("Fixed location succesfully saved")
 
+def printList(L):
+    for i in L:
+        node = i.head
+        print(i.head.value, end=" ")
+        while node.nextNode != None:
+            node = node.nextNode
+            print(node.value, end=" ")
+        print("")
+
 def createTrip(params):
-    # params = PX <dirección>/<elemento>
-    print("")
+    # params = PX, <dirección>/<elemento>
+    parts = re.findall("\w+", params)
+    userName = parts[0]
+    originDir = fileUtils.load("users")[userName].dir
+    if parts[1][0] == "e":
+        destinationDir = parts[1:]
+    else:
+        fixedLocation = parts[1]
+        destinationDir = fileUtils.load("fixed")[fixedLocation].dir
+    origVert1 = originDir[0]
+    origDist1 = originDir[1]
+    origVert2 = originDir[2]
+    origDist2 = originDir[3]
+    destVert1 = destinationDir[0]
+    destDist1 = destinationDir[1]
+    destVert2 = destinationDir[2]
+    destDist2 = destinationDir[3]
+    graph = fileUtils.load("map")
+    shortestPath = graphUtils.dijkstra(graph, origVert1[1:], destVert1[1:])
+    printList(shortestPath)
