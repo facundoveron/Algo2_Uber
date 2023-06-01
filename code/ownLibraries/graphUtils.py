@@ -36,7 +36,9 @@ def createGraph(vertices, edges):
     return graph
 
 def hash(key, n):
-    return (ord(key) - ord("a") + 1) % n
+    if key[0] == "e":
+        key = key[1:]
+    return int(key) % n
 
 def validator(direction, graph):
     n = len(graph)
@@ -622,18 +624,6 @@ Esta propiedad es la base del funcionamiento del algoritmo de Kruskal, que busca
 '''
     Ejercicio 21
 '''
-'''
-def deleteBidirecction(graph):
-    for i in graph:
-        nodo = i.head.nextNode
-        letter = nodo.value
-        while nodo != None:
-            if isinstance(letter, str):
-                delete(i, letter)
-            nodo = nodo.nextNode
-            if nodo != None:
-                letter = nodo.value
-'''
 
 def dijkstra(graph,s,r):
     n = len(graph)
@@ -653,17 +643,32 @@ def dijkstra(graph,s,r):
                 relax(u.value, v.head.value, w, Q, graph)
             nodo = nodo.nextNode
     return shortestPath(graph, s, r, n)
+
 def shortestPath(graph, s, v, n):
     path = LinkedList()
-    add(path,v)
+    add(path,"e"+v)
     while True:
         father = graph[hash(v,n)].head.value[2]
         add(path, father)
-        if father == s:
+        if father[1] == s:
             break
         else:
             v = father
     return path
+
+def initRelax(graph,s):
+    n = len(graph)
+    for i in graph:
+        letter = i.head.value
+        i.head.value = [letter, None, None]
+    graph[hash(s,n)].head.value[1] = 0
+
+def relax(u,v, w, Q, graph):
+    if v[1] == None or v[1] > (u[1] + w):
+        v[1] = u[1] + int(w)
+        v[2] = u[0]
+        enqueue(Q, graph[hash(v[0],5)].head)
+
 def minQueue(graph, Q):
     for i in graph:
         if i.head.value[1] != None:
@@ -672,17 +677,4 @@ def minQueue(graph, Q):
             if Q.head == None:
                 Q.head = nodo
                 break
-def initRelax(graph,s):
-    n = len(graph)
-    for i in graph:
-        letter = i.head.value
-        i.head.value = [letter, None, None]
-    graph[hash(s,n)].head.value[1] = 0
-def relax(u,v, w, Q, graph):
-    if v[1] == None or v[1] > (u[1] + w):
-        v[1] = u[1] + w
-        v[2] = u[0]
-        enqueue(Q, graph[hash(v[0],5)].head)
-        
-
 
