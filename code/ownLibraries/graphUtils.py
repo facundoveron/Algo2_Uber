@@ -8,21 +8,23 @@ import random
 
 def createGraph(vertices, edges):
     vertices = vertices.strip("{}\n")
+    vertices = vertices.replace("E={", "")
     vertices = vertices.split(",")
     n = len(vertices)
     graph = Array(n, LinkedList())
     for i in vertices:
         nodo = Node()
         nodo.value = i
-        index = hash(i[1],n)
+        index = hash(i[1:],n)
         graph[index] = LinkedList()
         graph[index].head = nodo
 
-    edges = edges.strip("{}\n")
-    edges = edges.split(", ")
+    edges = edges.replace("A={", "").replace(">}\n", "").replace("<","")
+    edges = edges.split(">,")
     for i in edges:
-        index = hash(i[2], n)
-        tupla = [i[4:6], i[7:9]]
+        i = i.split(",")
+        index = hash(i[0], n)
+        tupla = [i[1], i[2]]
         nodo = Node()
         nodo.value = tupla
         node = graph[index]

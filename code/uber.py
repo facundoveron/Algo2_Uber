@@ -15,5 +15,5 @@ def main(command):
 
 command = sys.argv[1:]
 main(command)
-#uberService.createMap("resources/map.txt")
-#uberService.loadFixedElement("<H0, {<e1, 100>, <e2, 1>}>")
+#uberService.setup("resources/map.txt")
+#uberService.saveElem("H1 <e8,20> <e10,30>")
