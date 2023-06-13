@@ -106,8 +106,43 @@ def createTrip(params):
         return
     parents = {}
     graphUtils.dijkstra(graph, originNode, parents)
-    #shortestPath = graphUtils.shortestPath(originNode, destinationNode, parents)
+    shortestPath = graphUtils.shortestPath(originNode, destinationNode, parents)
     driversNearUser = graphUtils.findDrivers(graph, originNode)
+    # driversNearUser[x][0] = minimun distance car <-> user (int)
+    # driversNearUser[x][1] = driver name (str)
+    # driversNearUser[x][2] = trip price (float)
+    driversNearUser.sort(key = lambda x: x[0])
+    chosenDriver = requestUserInput(user, driversNearUser)
+    # Move driver location to destinationDir
+    driversDic = fileUtils.load("drivers")
+    driverName = driversNearUser[chosenDriver][1]
+    driversDic[driverName].dir = destinationDir
+    fileUtils.save("drivers", driversDic)
+    # Move user location to destinationDir and update it's balance accordingly
+    usersDic = fileUtils.load("users")
+    user.balance = int(user.balance) - driversNearUser[chosenDriver][2]
+    user.dir = destinationDir
+    usersDic[userName] = user
+    fileUtils.save("users", usersDic)
+    print("El camino hacia destino es: ", shortestPath, "\n")
+    print("El viaje ha concluido.\n")
+
+def requestUserInput(user, drivers):
+    index = 0
+    inputMessage = "\n"
+    for driver in drivers:
+        if driver[2] <= int(user.balance):
+            inputMessage += f"{index+1}. {driver[1]} cobra ${driver[2]} y está a {driver[0]}m de tu ubicación actual.\n"
+            index +=1
+    inputMessage += "\n¿Con qué conductor te gustaría realizar el viaje?\n"
+    inputMessage += "Ingresar a continuación el número de la opción deseada:\n"
+    option = int(input(inputMessage))
+    while option < 1 or option > len(drivers):
+        print("La opción ingresada es incorrecta.\n")
+        print("Por favor, vuelva a ingresar la opción deseada a continuación:\n")
+        option = input(inputMessage)
+    print("Su elección ha sido guardada satisfactoriamente.\n")
+    return option-1
 
 def test():
     graph = fileUtils.load("map")

@@ -1,5 +1,6 @@
-import re
 from collections import deque
+import fileUtils
+import re
 
 class Node:
     def __init__(self, val, len):
@@ -71,6 +72,8 @@ def findDrivers(graph, source, maxDepthLevel=5):
                 queue.append((node.val, currLevel + 1))
                 visited.add(node.val)
                 if node.driver:
-                    drivers.append(node)
+                    driver = fileUtils.load("drivers")[node.driver]
+                    tripCost = (node.minDist + int(driver.rate))/4
+                    drivers.append([node.minDist, node.driver, tripCost])
     return drivers
 
