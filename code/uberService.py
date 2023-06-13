@@ -80,20 +80,23 @@ def saveElem(params):
         print("Fixed location succesfully saved")
 
 def createTrip(params):
-    # params = PX, <dirección>/<elemento>
+    # params = PX <dirección>/<elemento>
     graph = fileUtils.load("map")
-    parts = re.findall("\w+", params)
-    userName = parts[0]
+    userName = params[0]
     user = fileUtils.load("users").get(userName, False)
     if not user:
         print("Entered user does not yet exist")
         return
     originDir = user.dir
-    if parts[1][0] == "e":
-        destinationDir = parts[1:]
+    if params[1][0] == "<":
+        destinationDir = re.findall("\w+", params[1])
     else:
-        fixedLocationName = parts[1]
-        destinationDir = fileUtils.load("fixed")[fixedLocationName].dir
+        fixedLocationName = params[1]
+        fixedLocation = fileUtils.load("fixed").get(fixedLocationName, False)
+        if not fixedLocation:
+            print("Entered fixed location does not yet exist")
+            return
+        destinationDir = fixedLocation.dir
     # At this point isValid should always returns a node,
     # as direction was previously checked at save time
     originNode = isValid(graph, originDir)
