@@ -2,14 +2,6 @@ import graphUtils
 import fileUtils
 import re
 
-def printList(L):
-    node = L.head
-    print(L.head.value, end=" ")
-    while node.nextNode != None:
-        node = node.nextNode
-        print(node.value, end=" ")
-    print("")
-
 class Elem:
     def __init__(self, dir):
         self.dir = dir
@@ -51,31 +43,30 @@ def isValid(graph, dir):
 
 def saveElem(params):
     # params = <nombre, dirección, monto>
-    # params = AX, {<e1, 10>, <e2, 5>}
-    # params = PX, {<e1, 10>, <e2, 5>}, saldo
-    # params = CX, {<e1, 10>, <e2, 5>}, tarifa
-    parts = re.findall("\w+", params)
-    # name -> part 0
-    # dir -> parts 1-4
-    # amount -> part 5
-    if len(parts) <= 1 or (len(parts) > 1 and len(parts) < 5):
+    # params = AX "<e1, 10>, <e2, 5>"
+    # params = PX "<e1, 10>, <e2, 5>" saldo
+    # params = CX "<e1, 10>, <e2, 5>" tarifa
+    # name -> params[0]
+    # dir -> params[1]
+    # amount -> params[2]
+    if len(params) < 2:
         print("Missing required arguments")
         return
-    name = parts[0]
-    dir = parts[1:-1] if len(parts) == 6 else parts[1:]
+    name = params[0]
+    dir = re.findall("\w+", params[1])
     graph = fileUtils.load("map")
     destinationNode = isValid(graph, dir)
     if not destinationNode:
         print("Entered direction is not a valid direction in the map")
         return
     if name[0] == "P":
-        balance = parts[5]
+        balance = params[2]
         dic = fileUtils.load("users")
         dic[name] = User(dir, balance)
         fileUtils.save("users", dic)
         print("User succesfully saved")
     elif name[0] == "C":
-        rate = parts[5]
+        rate = params[2]
         dic = fileUtils.load("drivers")
         dic[name] = Driver(dir, rate)
         destinationNode.driver = name
@@ -114,7 +105,6 @@ def createTrip(params):
     graphUtils.dijkstra(graph, originNode, parents)
     #shortestPath = graphUtils.shortestPath(originNode, destinationNode, parents)
     driversNearUser = graphUtils.findDrivers(graph, originNode)
-    
 
 def test():
     graph = fileUtils.load("map")
