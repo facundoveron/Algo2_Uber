@@ -4,8 +4,6 @@ import traceback
 import fileUtils
 
 def main(command):
-    
-    
     try:
         if command[0] == "-create_map":
             uberService.setup(command[1])
