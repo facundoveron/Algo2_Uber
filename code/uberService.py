@@ -34,10 +34,16 @@ def setup(route):
 def isValid(graph, dir):
     # ej: dir = ["e0", "10", "e1", "20"]
     dirLen = int(dir[1]) + int(dir[3])
-    startNode = dir[0][1]
-    adjList = graph[startNode]
-    for node in adjList:
-        if node.val == dir[2][1] and dirLen == int(node.len):
+    startNode = dir[0][1:]
+    endNode = dir[2][1:]
+    adjListS = graph[startNode]
+    adjListE = graph[endNode]
+    for node in adjListS:
+        if node.val == endNode and dirLen == int(node.len):
+            return node
+
+    for node in adjListE:
+        if node.val == startNode and dirLen == int(node.len):
             return node
     return False
 
@@ -49,11 +55,21 @@ def saveElem(params):
     # name -> params[0]
     # dir -> params[1]
     # amount -> params[2]
+    params = params.replace("<", "").replace(">", "")
+    params = [element.strip(",") for element in params.split()]
+    paramsNew = []
+    for i in params:
+        j = i.split(",")
+        for k in j:
+            paramsNew.append(k)
+
+    params = paramsNew
+
     if len(params) < 2:
         print("Missing required arguments")
         return
     name = params[0]
-    dir = re.findall("\w+", params[1])
+    dir = params[1:]
     graph = fileUtils.load("map")
     destinationNode = isValid(graph, dir)
     if not destinationNode:
@@ -82,7 +98,7 @@ def saveElem(params):
 def createTrip(params):
     # params = PX <dirección>/<elemento>
     graph = fileUtils.load("map")
-    userName = params[0]
+    userName = params[0:2]
     user = fileUtils.load("users").get(userName, False)
     if not user:
         print("Entered user does not yet exist")
@@ -91,6 +107,7 @@ def createTrip(params):
     if params[1][0] == "<":
         destinationDir = re.findall("\w+", params[1])
     else:
+        params = params.split()
         fixedLocationName = params[1]
         fixedLocation = fileUtils.load("fixed").get(fixedLocationName, False)
         if not fixedLocation:
