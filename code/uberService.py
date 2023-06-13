@@ -1,6 +1,14 @@
-from ownLibraries import graphUtils
+import graphUtils
 import fileUtils
 import re
+
+def printList(L):
+    node = L.head
+    print(L.head.value, end=" ")
+    while node.nextNode != None:
+        node = node.nextNode
+        print(node.value, end=" ")
+    print("")
 
 class Elem:
     def __init__(self, dir):
@@ -17,20 +25,29 @@ class Driver(Elem):
         self.rate = amount
 
 def setup(route):
-    try:
-        coordinates = open(route)
-        if coordinates != None:
-            vertices = coordinates.readline()
-            edges = coordinates.readline()
-            coordinates.close()
-            graph = graphUtils.createGraph(vertices, edges)
-            fileUtils.save("map", graph)
-            fileUtils.setupDicts()
-            print("Map succesfully saved")
-        else:
-            print("El archivo está vacío")
-    except Exception as a:
-        print("Error al crear el mapa", a.args)
+    coordinates = open(route)
+    if coordinates != None:
+        vertices = coordinates.readline()
+        vertices = re.findall("\d+", vertices)
+        edges = coordinates.readline()
+        edges = re.findall("<.+?>", edges)
+        coordinates.close()
+        graph = graphUtils.createGraph(vertices, edges)
+        fileUtils.save("map", graph)
+        fileUtils.setupDicts()
+        print("Map succesfully saved")
+    else:
+        print("Initialization error")
+
+def isValid(graph, dir):
+    # ej: dir = ["e0", "10", "e1", "20"]
+    dirLen = int(dir[1]) + int(dir[3])
+    startNode = dir[0][1]
+    adjList = graph[startNode]
+    for node in adjList:
+        if node.val == dir[2][1] and dirLen == int(node.len):
+            return node
+    return False
 
 def saveElem(params):
     # params = <nombre, dirección, monto>
@@ -46,7 +63,11 @@ def saveElem(params):
         return
     name = parts[0]
     dir = parts[1:-1] if len(parts) == 6 else parts[1:]
-    # todo: add dir validation
+    graph = fileUtils.load("map")
+    destinationNode = isValid(graph, dir)
+    if not destinationNode:
+        print("Entered direction is not a valid direction in the map")
+        return
     if name[0] == "P":
         balance = parts[5]
         dic = fileUtils.load("users")
@@ -57,7 +78,9 @@ def saveElem(params):
         rate = parts[5]
         dic = fileUtils.load("drivers")
         dic[name] = Driver(dir, rate)
+        destinationNode.driver = name
         fileUtils.save("drivers", dic)
+        fileUtils.save("map", graph)
         print("Driver succesfully saved")
     else:
         dic = fileUtils.load("fixed")
@@ -65,33 +88,36 @@ def saveElem(params):
         fileUtils.save("fixed", dic)
         print("Fixed location succesfully saved")
 
-def printList(L):
-    for i in L:
-        node = i.head
-        print(i.head.value, end=" ")
-        while node.nextNode != None:
-            node = node.nextNode
-            print(node.value, end=" ")
-        print("")
-
 def createTrip(params):
     # params = PX, <dirección>/<elemento>
+    graph = fileUtils.load("map")
     parts = re.findall("\w+", params)
     userName = parts[0]
-    originDir = fileUtils.load("users")[userName].dir
+    user = fileUtils.load("users").get(userName, False)
+    if not user:
+        print("Entered user does not yet exist")
+        return
+    originDir = user.dir
     if parts[1][0] == "e":
         destinationDir = parts[1:]
     else:
-        fixedLocation = parts[1]
-        destinationDir = fileUtils.load("fixed")[fixedLocation].dir
-    origVert1 = originDir[0]
-    origDist1 = originDir[1]
-    origVert2 = originDir[2]
-    origDist2 = originDir[3]
-    destVert1 = destinationDir[0]
-    destDist1 = destinationDir[1]
-    destVert2 = destinationDir[2]
-    destDist2 = destinationDir[3]
+        fixedLocationName = parts[1]
+        destinationDir = fileUtils.load("fixed")[fixedLocationName].dir
+    # At this point isValid should always returns a node,
+    # as direction was previously checked at save time
+    originNode = isValid(graph, originDir)
+    destinationNode = isValid(graph, destinationDir)
+    if not destinationNode:
+        print("Entered direction is not a valid direction in the map")
+        return
+    parents = {}
+    graphUtils.dijkstra(graph, originNode, parents)
+    #shortestPath = graphUtils.shortestPath(originNode, destinationNode, parents)
+    driversNearUser = graphUtils.findDrivers(graph, originNode)
+    
+
+def test():
     graph = fileUtils.load("map")
-    shortestPath = graphUtils.dijkstra(graph, origVert1[1:], destVert1[1:])
-    printList(shortestPath)
+    users = fileUtils.load("users")
+    drivers = fileUtils.load("drivers")
+    print(vars(graph["3"][0]))

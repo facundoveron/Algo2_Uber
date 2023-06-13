@@ -1,5 +1,6 @@
 import sys
 import uberService
+import traceback
 import fileUtils
 
 def main(command):
@@ -10,8 +11,11 @@ def main(command):
             uberService.saveElem(command[1])
         elif command[0] == "-create_trip":
             uberService.createTrip(command[1])
+        elif command[0] == "-test":
+            uberService.test()
     except Exception as a:
-        print("Error", a.args)
+        traceback.print_exc()
+        #print("Error", a.args)
 
 command = sys.argv[1:]
 main(command)
