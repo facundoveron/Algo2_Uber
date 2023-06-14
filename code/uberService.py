@@ -76,7 +76,7 @@ def saveElem(params):
         print("Entered direction is not a valid direction in the map")
         return
     if name[0] == "P":
-        balance = params[2]
+        balance = params[5]
         dic = fileUtils.load("users")
         dic[name] = User(dir, balance)
         fileUtils.save("users", dic)

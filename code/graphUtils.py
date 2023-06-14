@@ -53,7 +53,8 @@ def shortestPath(s, v, parents):
     path.append(v.val)
     parent = v.minDistParent if v.minDistParent else parents[v.val]
     while parent.val != s.val:
-        path.append(v.minDistParent.val)
+        path.append(parent.val)
+        parent = parent.minDistParent
     path.append(s.val)
     return path
 
