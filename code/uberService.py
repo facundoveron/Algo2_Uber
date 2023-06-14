@@ -99,6 +99,7 @@ def createTrip(params):
     # params = PX <dirección>/<elemento>
     graph = fileUtils.load("map")
     userName = params[0:2]
+    drivers = fileUtils.load("drivers")
     user = fileUtils.load("users").get(userName, False)
     if not user:
         print("Entered user does not yet exist")
@@ -122,6 +123,7 @@ def createTrip(params):
         print("Entered direction is not a valid direction in the map")
         return
     parents = {}
+    originNode = reorganizeGraph(graph, fixedLocation, originDir, drivers)
     graphUtils.dijkstra(graph, originNode, parents)
     shortestPath = graphUtils.shortestPath(originNode, destinationNode, parents)
     driversNearUser = graphUtils.findDrivers(graph, originNode)
@@ -160,6 +162,43 @@ def requestUserInput(user, drivers):
         option = input(inputMessage)
     print("Su elección ha sido guardada satisfactoriamente.\n")
     return option-1
+
+def reorganizeR(graph, object, drivers):
+    n = len(graph)
+    graph[str(n+1)] = []
+
+    list = graph[object[0][1:]]
+    for node in list:
+        if node.val == object[2][1:]:
+            node.val = str(n+1)
+            node.len = str(object[1])
+            graph[str(n + 1)].append(graphUtils.Node(str(object[2][1:]), str(object[3])))
+            if node.driver != None:
+                car = [node.driver,drivers[node.driver]]
+                if car[1].dir[1] > node.len:
+                    node.driver = None
+                    graph[str(n+1)][0].driver = car[0]
+        break
+
+    list = graph[object[2][1:]]
+    for node in list:
+        if node.val == object[0][1:]:
+            node.val = str(n+1)
+            node.len = str(object[3])
+            graph[str(n + 1)].append(graphUtils.Node(str(object[0][1:]), str(object[1])))
+            if node.driver != None:
+                car = [node.driver,drivers[node.driver]]
+                if car[1].dir[1] > node.len:
+                    node.driver = None
+                    graph[str(n+1)][0].driver = car[0]
+        break
+
+
+def reorganizeGraph(graph, dest, origen, drivers):
+    reorganizeR(graph, dest.dir, drivers)
+    reorganizeR(graph, origen, drivers)
+    return graph[str(len(graph))][0]
+
 
 def test():
     graph = fileUtils.load("map")
