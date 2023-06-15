@@ -1,0 +1,4 @@
+Al crear un viaje desde A hacia B, los pasos a resolver son:
+
+1. Encontrar el camino más corto desde A hacia B. Se toma en cuenta la salida de A y la entrada a B
+2. Encontrar los conductores más cercanos a A. Se toma en cuenta la salida a la dirección del conductor y la entrada entrada a A

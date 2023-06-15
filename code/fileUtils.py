@@ -1,10 +1,10 @@
 import pickle
 
 routes = {
-    "map": "resources/map",
-    "fixed": "resources/fixed",
-    "users": "resources/users",
-    "drivers": "resources/drivers"
+    "map": "../resources/map",
+    "fixed": "../resources/fixed",
+    "users": "../resources/users",
+    "drivers": "../resources/drivers"
 }
 
 def setupDicts():

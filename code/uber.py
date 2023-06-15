@@ -20,4 +20,4 @@ def main(command):
 command = sys.argv[1:]
 main(command)
 #uberService.setup("resources/map.txt")
-uberService.createTrip("P2 H1")
+#uberService.createTrip("P2 H1")
