@@ -49,6 +49,8 @@ def dijkstra(graph, sourceNode):
 def shortestPath(s, v, parents):
     path = []
     #path.append(v.val)
+    if s == v:
+        return (path, v.minDistParent)
     parent = v.minDistParent if v.minDistParent else parents[v.val]
     while parent.val != s.val:
         path.append(parent.val)
@@ -63,6 +65,8 @@ def findDrivers(graph, source, maxDepthLevel=5):
     visited = set()
     queue = deque([(source.val, currLevel)])
     visited.add(source.val)
+    if source.driver != None:
+        drivers.append(source)
     while queue:
         u, currLevel = queue.popleft()
         if currLevel > maxDepthLevel:

@@ -133,9 +133,16 @@ def createTrip(params):
         driverNode, distBeforeStartDriver = isValid(graph, driver.dir)
         parents = graphUtils.dijkstra(graph, driverNode)
         shortestPath, minDist = graphUtils.shortestPath(driverNode, originNode, parents)
-        middleRoadDist = minDist - int(originNode.len)
-        finalDist = int(originNode.len) - int(distBeforeStart)
-        totalDist = int(distBeforeStartDriver) + middleRoadDist + finalDist
+        if minDist == None:
+            middleRoadDist = int(originNode.len)
+        else:
+            middleRoadDist = minDist - int(originNode.len)
+        if user.dir == driver.dir:
+            totalDist = 0
+        else:
+            finalDist = int(originNode.len) - int(distBeforeStart)
+            totalDist = int(distBeforeStartDriver) + middleRoadDist + finalDist
+        
         tripCost = (totalDist + int(driver.rate))/4
         driversNearUser.append([totalDist, node.driver, tripCost])
     # driversNearUser[x][0] = minimun distance car <-> user (int)
