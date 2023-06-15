@@ -40,11 +40,10 @@ def isValid(graph, dir):
     adjListE = graph[endNode]
     for node in adjListS:
         if node.val == endNode and dirLen == int(node.len):
-            return node
-
+            return (node, dir[3])
     for node in adjListE:
         if node.val == startNode and dirLen == int(node.len):
-            return node
+            return (node, dir[1])
     return False
 
 def saveElem(params):
@@ -66,12 +65,18 @@ def saveElem(params):
         print("Entered direction is not a valid direction in the map")
         return
     if name[0] == "P":
+        if len(params) < 3:
+            print("Missing required arguments: user balance")
+            return
         balance = params[2]
         dic = fileUtils.load("users")
         dic[name] = User(dir, balance)
         fileUtils.save("users", dic)
         print("User succesfully saved")
     elif name[0] == "C":
+        if len(params) < 3:
+            print("Missing required arguments: driver rate")
+            return
         rate = params[2]
         dic = fileUtils.load("drivers")
         dic[name] = Driver(dir, rate)
@@ -97,7 +102,6 @@ def createTrip(params):
     if params[1][0] == "<":
         destinationDir = re.findall("\w+", params[1])
     else:
-        params = params.split()
         fixedLocationName = params[1]
         fixedLocation = fileUtils.load("fixed").get(fixedLocationName, False)
         if not fixedLocation:
@@ -106,20 +110,45 @@ def createTrip(params):
         destinationDir = fixedLocation.dir
     # At this point isValid should always returns a node,
     # as direction was previously checked at save time
-    originNode = isValid(graph, originDir)
-    destinationNode = isValid(graph, destinationDir)
+    originNode, distBeforeStart = isValid(graph, originDir)
+    destinationNode, distBeforeEnd = isValid(graph, destinationDir)
     if not destinationNode:
         print("Entered direction is not a valid direction in the map")
         return
     parents = {}
+    separator = " -> "
     graphUtils.dijkstra(graph, originNode, parents)
-    shortestPath = graphUtils.shortestPath(originNode, destinationNode, parents)
-    driversNearUser = graphUtils.findDrivers(graph, originNode)
+    shortestPath, minDist = graphUtils.shortestPath(originNode, destinationNode, parents)
+    middleRoadDist = minDist - int(destinationNode.len)
+    finalDist = int(destinationNode.len) - int(distBeforeEnd)
+    print("")
+    print(f"Para llegar a destino, se deben recorrer {distBeforeStart}m hasta {originNode.val}")
+    if middleRoadDist != 0:
+        print(f"Luego {middleRoadDist}m seguiendo el camino {separator.join(shortestPath)}")
+    print(f"Y finalmente recorrer {finalDist}m en dirección hacia {destinationNode.val}.")
+    print("")
+    driversNearUser = []
+    driversNodes = graphUtils.findDrivers(graph, originNode)
+    for node in driversNodes:
+        driver = fileUtils.load("drivers")[node.driver]
+        driverNode, distBeforeStartDriver = isValid(graph, driver.dir)
+        parents = {}
+        graphUtils.dijkstra(graph, driverNode, parents)
+        shortestPath, minDist = graphUtils.shortestPath(driverNode, originNode, parents)
+        middleRoadDist = minDist - int(originNode.len)
+        finalDist = int(originNode.len) - int(distBeforeStart)
+        totalDist = int(distBeforeStartDriver) + middleRoadDist + finalDist
+        tripCost = (totalDist + int(driver.rate))/4
+        driversNearUser.append([totalDist, node.driver, tripCost])
     # driversNearUser[x][0] = minimun distance car <-> user (int)
     # driversNearUser[x][1] = driver name (str)
     # driversNearUser[x][2] = trip price (float)
     driversNearUser.sort(key = lambda x: x[0])
     chosenDriver = requestUserInput(user, driversNearUser)
+    if not chosenDriver:
+        print("")
+        print("No se encontraron conductores disponibles cerca de tu ubicación")
+        return
     # Move driver location to destinationDir
     driversDic = fileUtils.load("drivers")
     driverName = driversNearUser[chosenDriver][1]
@@ -131,28 +160,32 @@ def createTrip(params):
     user.dir = destinationDir
     usersDic[userName] = user
     fileUtils.save("users", usersDic)
-    print("El camino hacia destino es: ", shortestPath, "\n")
-    print("El viaje ha concluido.\n")
+    # Print final message 
+    print("El viaje ha concluido.", end="\n\n")
 
 def requestUserInput(user, drivers):
     index = 0
-    inputMessage = "\n"
+    if len(drivers) == 0:
+        return False
+    inputMessage = "Los conductores más cercanos disponibles para completar el viaje son los siguientes:\n\n"
     for driver in drivers:
-        if driver[2] <= int(user.balance):
-            inputMessage += f"{index+1}. {driver[1]} cobra ${driver[2]} y está a {driver[0]}m de tu ubicación actual.\n"
+        if driver[2] <= int(user.balance) and index <= 3:
+            inputMessage += f"{index+1}. {driver[1]}, que cobra ${driver[2]} y está a {driver[0]}m de tu ubicación actual.\n"
             index +=1
     inputMessage += "\n¿Con qué conductor te gustaría realizar el viaje?\n"
-    inputMessage += "Ingresar a continuación el número de la opción deseada:\n"
+    inputMessage += "\nIngresar a continuación el número de la opción deseada: "
     option = int(input(inputMessage))
     while option < 1 or option > len(drivers):
-        print("La opción ingresada es incorrecta.\n")
-        print("Por favor, vuelva a ingresar la opción deseada a continuación:\n")
-        option = input(inputMessage)
-    print("Su elección ha sido guardada satisfactoriamente.\n")
+        print("\nLa opción ingresada es incorrecta.")
+        print("\nPor favor, vuelva a ingresar la opción deseada a continuación: ", end="")
+        option = int(input())
+    print("\nSu elección ha sido guardada satisfactoriamente.\n")
     return option-1
 
 def test():
     graph = fileUtils.load("map")
     users = fileUtils.load("users")
     drivers = fileUtils.load("drivers")
-    print(vars(graph["3"][0]))
+    print(vars(users["P2"]))
+    print(vars(drivers["C5"]))
+    #print(vars(drivers["C5"]))

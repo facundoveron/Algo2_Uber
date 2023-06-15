@@ -1,5 +1,4 @@
 from collections import deque
-import fileUtils
 import re
 
 class Node:
@@ -47,16 +46,19 @@ def dijkstra(graph, sourceNode, parents):
         for v in graph[u.val]:
             if v.val not in S:
                 relax(u, v, Q, parents)
-    
+
 def shortestPath(s, v, parents):
     path = []
-    path.append(v.val)
+    #path.append(v.val)
+    print(v.val)
+    print(parents.items())
     parent = v.minDistParent if v.minDistParent else parents[v.val]
     while parent.val != s.val:
         path.append(parent.val)
         parent = parent.minDistParent
     path.append(s.val)
-    return path
+    path.reverse()
+    return (path, v.minDist)
 
 def findDrivers(graph, source, maxDepthLevel=5):
     drivers = []
@@ -73,8 +75,5 @@ def findDrivers(graph, source, maxDepthLevel=5):
                 queue.append((node.val, currLevel + 1))
                 visited.add(node.val)
                 if node.driver:
-                    driver = fileUtils.load("drivers")[node.driver]
-                    tripCost = (node.minDist + int(driver.rate))/4
-                    drivers.append([node.minDist, node.driver, tripCost])
+                    drivers.append(node)
     return drivers
-
