@@ -1,4 +1,5 @@
 from collections import deque
+import heapq
 import re
 
 class Node:
@@ -8,6 +9,8 @@ class Node:
         self.driver = None
         self.minDist = None
         self.minDistParent = None
+    def __lt__(self, other):
+        return self.minDist < other.minDist
 
 def createGraph(vertices, edges):
     graph = {}
@@ -21,13 +24,6 @@ def createGraph(vertices, edges):
         graph[edge[0]].append(Node(edge[1], edge[2]))
     return graph
 
-def relax(u, v, Q, parents):
-    if v.minDist == None or v.minDist > (u.minDist + int(v.len)):
-        v.minDist = u.minDist + int(v.len)
-        v.minDistParent = u
-        parents[v.val] = u
-        Q.append(v)
-
 def initRelax(graph, sourceNode):
     for adjList in graph.values():
         for node in adjList:
@@ -35,23 +31,24 @@ def initRelax(graph, sourceNode):
             node.minDistParent = None
     sourceNode.minDist = 0
 
-def dijkstra(graph, sourceNode, parents):
+def dijkstra(graph, sourceNode):
     initRelax(graph, sourceNode)
-    S = []
-    Q = []
-    Q.append(sourceNode)
-    while len(Q) > 0:
-        u = Q.pop(0)
-        S.append(u.val)
+    parents = {node: None for node in graph}
+    heap = [(sourceNode.minDist, sourceNode)]
+    while heap:
+        currDist, u = heapq.heappop(heap)
+        if currDist > u.minDist:
+            continue
         for v in graph[u.val]:
-            if v.val not in S:
-                relax(u, v, Q, parents)
+            if v.minDist == None or (currDist + int(v.len)) < v.minDist:
+                v.minDist = currDist + int(v.len)
+                v.minDistParent = u
+                parents[v.val] = u
+                heapq.heappush(heap, (v.minDist, v))
 
 def shortestPath(s, v, parents):
     path = []
     #path.append(v.val)
-    print(v.val)
-    print(parents.items())
     parent = v.minDistParent if v.minDistParent else parents[v.val]
     while parent.val != s.val:
         path.append(parent.val)

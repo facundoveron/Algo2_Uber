@@ -60,7 +60,7 @@ def saveElem(params):
     name = params[0]
     dir = re.findall("\w+", params[1])
     graph = fileUtils.load("map")
-    destinationNode = isValid(graph, dir)
+    destinationNode, distBeforeEnd = isValid(graph, dir)
     if not destinationNode:
         print("Entered direction is not a valid direction in the map")
         return
@@ -115,9 +115,8 @@ def createTrip(params):
     if not destinationNode:
         print("Entered direction is not a valid direction in the map")
         return
-    parents = {}
     separator = " -> "
-    graphUtils.dijkstra(graph, originNode, parents)
+    parents = graphUtils.dijkstra(graph, originNode)
     shortestPath, minDist = graphUtils.shortestPath(originNode, destinationNode, parents)
     middleRoadDist = minDist - int(destinationNode.len)
     finalDist = int(destinationNode.len) - int(distBeforeEnd)
@@ -132,8 +131,7 @@ def createTrip(params):
     for node in driversNodes:
         driver = fileUtils.load("drivers")[node.driver]
         driverNode, distBeforeStartDriver = isValid(graph, driver.dir)
-        parents = {}
-        graphUtils.dijkstra(graph, driverNode, parents)
+        parents = graphUtils.dijkstra(graph, driverNode)
         shortestPath, minDist = graphUtils.shortestPath(driverNode, originNode, parents)
         middleRoadDist = minDist - int(originNode.len)
         finalDist = int(originNode.len) - int(distBeforeStart)
@@ -145,7 +143,7 @@ def createTrip(params):
     # driversNearUser[x][2] = trip price (float)
     driversNearUser.sort(key = lambda x: x[0])
     chosenDriver = requestUserInput(user, driversNearUser)
-    if not chosenDriver:
+    if chosenDriver < 0:
         print("")
         print("No se encontraron conductores disponibles cerca de tu ubicación")
         return
@@ -166,10 +164,10 @@ def createTrip(params):
 def requestUserInput(user, drivers):
     index = 0
     if len(drivers) == 0:
-        return False
+        return -1
     inputMessage = "Los conductores más cercanos disponibles para completar el viaje son los siguientes:\n\n"
     for driver in drivers:
-        if driver[2] <= int(user.balance) and index <= 3:
+        if driver[2] <= int(user.balance) and index < 3:
             inputMessage += f"{index+1}. {driver[1]}, que cobra ${driver[2]} y está a {driver[0]}m de tu ubicación actual.\n"
             index +=1
     inputMessage += "\n¿Con qué conductor te gustaría realizar el viaje?\n"
