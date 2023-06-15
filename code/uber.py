@@ -20,4 +20,5 @@ def main(command):
 command = sys.argv[1:]
 main(command)
 #uberService.setup("resources/map.txt")
-uberService.createTrip("P2 H1")
+#uberService.saveElem(['P1', '<e8,10> <e10,40>', '2000'])
+uberService.createTrip(["P2", "H1"])

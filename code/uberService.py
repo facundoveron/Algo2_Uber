@@ -55,28 +55,18 @@ def saveElem(params):
     # name -> params[0]
     # dir -> params[1]
     # amount -> params[2]
-    params = params.replace("<", "").replace(">", "")
-    params = [element.strip(",") for element in params.split()]
-    paramsNew = []
-    for i in params:
-        j = i.split(",")
-        for k in j:
-            paramsNew.append(k)
-
-    params = paramsNew
-
     if len(params) < 2:
         print("Missing required arguments")
         return
     name = params[0]
-    dir = params[1:]
+    dir = re.findall("\w+", params[1])
     graph = fileUtils.load("map")
     destinationNode = isValid(graph, dir)
     if not destinationNode:
         print("Entered direction is not a valid direction in the map")
         return
     if name[0] == "P":
-        balance = params[5]
+        balance = params[2]
         dic = fileUtils.load("users")
         dic[name] = User(dir, balance)
         fileUtils.save("users", dic)
@@ -98,17 +88,17 @@ def saveElem(params):
 def createTrip(params):
     # params = PX <dirección>/<elemento>
     graph = fileUtils.load("map")
-    userName = params[0:2]
+    userName = params[0]
     drivers = fileUtils.load("drivers")
     user = fileUtils.load("users").get(userName, False)
     if not user:
         print("Entered user does not yet exist")
         return
     originDir = user.dir
+    #params = params.split()
     if params[1][0] == "<":
         destinationDir = re.findall("\w+", params[1])
     else:
-        params = params.split()
         fixedLocationName = params[1]
         fixedLocation = fileUtils.load("fixed").get(fixedLocationName, False)
         if not fixedLocation:
@@ -117,6 +107,7 @@ def createTrip(params):
         destinationDir = fixedLocation.dir
     # At this point isValid should always returns a node,
     # as direction was previously checked at save time
+    fixedLocation = destinationDir
     originNode = isValid(graph, originDir)
     destinationNode = isValid(graph, destinationDir)
     if not destinationNode:
@@ -165,11 +156,11 @@ def requestUserInput(user, drivers):
 
 def reorganizeR(graph, object, drivers):
     n = len(graph)
-    graph[str(n+1)] = []
 
     list = graph[object[0][1:]]
     for node in list:
         if node.val == object[2][1:]:
+            graph[str(n+1)] = []
             node.val = str(n+1)
             node.len = str(object[1])
             graph[str(n + 1)].append(graphUtils.Node(str(object[2][1:]), str(object[3])))
@@ -178,7 +169,7 @@ def reorganizeR(graph, object, drivers):
                 if car[1].dir[1] > node.len:
                     node.driver = None
                     graph[str(n+1)][0].driver = car[0]
-        break
+            break
 
     list = graph[object[2][1:]]
     for node in list:
@@ -191,11 +182,11 @@ def reorganizeR(graph, object, drivers):
                 if car[1].dir[1] > node.len:
                     node.driver = None
                     graph[str(n+1)][0].driver = car[0]
-        break
+            break
 
 
 def reorganizeGraph(graph, dest, origen, drivers):
-    reorganizeR(graph, dest.dir, drivers)
+    reorganizeR(graph, dest, drivers)
     reorganizeR(graph, origen, drivers)
     return graph[str(len(graph))][0]
 
