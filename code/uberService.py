@@ -142,7 +142,6 @@ def createTrip(params):
         else:
             finalDist = int(originNode.len) - int(distBeforeStart)
             totalDist = int(distBeforeStartDriver) + middleRoadDist + finalDist
-        
         tripCost = (totalDist + int(driver.rate))/4
         driversNearUser.append([totalDist, node.driver, tripCost])
     # driversNearUser[x][0] = minimun distance car <-> user (int)

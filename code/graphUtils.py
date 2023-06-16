@@ -45,6 +45,7 @@ def dijkstra(graph, sourceNode):
                 v.minDistParent = u
                 parents[v.val] = u
                 heapq.heappush(heap, (v.minDist, v))
+    return parents
 
 def shortestPath(s, v, parents):
     path = []
